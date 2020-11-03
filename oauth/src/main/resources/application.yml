@@ -1,0 +1,29 @@
+server:
+  port: 8082
+spring:
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id: 1024780312742-snbvoc0oaccf7gnbipg4ijp8tfccficq.apps.googleusercontent.com
+            client-secret: _z5-m-uDPU64nTCtbqczDtCK
+            scope:
+              - email
+              - profile
+  application:
+    name: eureka-client-oauth
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka
+    register-with-eureka: true
+    fetch-registry: true
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'
+  endpoint:
+    shutdown:
+      enabled: true

@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import me.minjun.eurekaclientuser.domain.user.User;
 import me.minjun.eurekaclientuser.domain.user.UserRepository;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
@@ -19,8 +20,15 @@ public class UserApiController {
 
     @GetMapping("/hello")
     public Mono<String> helloWorld(){
-        log.info("hello world");
-        return Mono.just("hello world");
+        WebClient webClient = WebClient.builder().build();
+        Mono<String> stringMono = webClient.get()
+                .uri("http://localhost:9999/api/oauth/hello")
+                .retrieve()
+                .bodyToMono(String.class);
+
+        log.info("request data from EUREKA-CLIENT-OAUTH");
+
+        return stringMono;
     }
 
     @GetMapping("/all")
@@ -38,6 +46,23 @@ public class UserApiController {
         String email = (String) req.get("email");
         String name = (String) req.get("name");
         return userRepository.save(User.builder().email(email).name(name).build());
+    }
+
+    @GetMapping("/oauth2")
+    public Mono<User> saveOAuth2User(){
+        WebClient webClient = WebClient.builder().build();
+
+        Mono<Map> mapMono = webClient.get()
+                .uri("http://localhost:9999/api/oauth/user")
+                .retrieve()
+                .bodyToMono(Map.class);
+
+        return mapMono.flatMap(o->{
+            String email = (String) o.get("email");
+            String name = (String) o.get("name");
+
+            return userRepository.save(User.builder().email(email).name(name).build());
+        });
     }
 
     @PutMapping("/update")

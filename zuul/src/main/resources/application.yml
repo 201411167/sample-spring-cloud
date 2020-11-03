@@ -14,3 +14,6 @@ zuul:
     eureka-client-user:
       path: /api/user/**
       service-id: eureka-client-user
+    eureka-client-oauth:
+      path: /api/oauth/**
+      service-id: eureka-client-oauth
